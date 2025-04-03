@@ -1,0 +1,4 @@
+hm:
+  auth:
+    excludePaths: # 无需登录校验的路径
+      - /user/api/v1/login/login_auth
