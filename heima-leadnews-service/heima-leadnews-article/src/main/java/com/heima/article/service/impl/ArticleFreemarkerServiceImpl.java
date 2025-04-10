@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.heima.article.mapper.ApArticleContentMapper;
+import com.heima.article.mapper.ApArticleMapper;
 import com.heima.article.service.ApArticleService;
 import com.heima.article.service.ArticleFreemarkerService;
 import com.heima.file.service.FileStorageService;
 import com.heima.model.article.pojos.ApArticle;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -25,21 +27,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class ArticleFreemarkerServiceImpl implements ArticleFreemarkerService {
 
-    @Autowired
-    private ApArticleContentMapper apArticleContentMapper;
 
-    @Autowired
-    private Configuration configuration;
+    private final ApArticleContentMapper apArticleContentMapper;
 
-    @Autowired
-    private FileStorageService fileStorageService;
 
-    @Autowired
-    private ApArticleService apArticleService;
+    private final Configuration configuration;
+
+
+    private final FileStorageService fileStorageService;
+
+
+    private final ApArticleMapper apArticleMapper;
 
     /**
      * 生成静态文件上传到minIO中
@@ -72,7 +75,7 @@ public class ArticleFreemarkerServiceImpl implements ArticleFreemarkerService {
 
 
             //4.4 修改ap_article表，保存static_url字段
-            apArticleService.update(Wrappers.<ApArticle>lambdaUpdate().eq(ApArticle::getId,apArticle.getId())
+            apArticleMapper.update(apArticle,Wrappers.<ApArticle>lambdaUpdate().eq(ApArticle::getId,apArticle.getId())
                     .set(ApArticle::getStaticUrl,path));
 
 

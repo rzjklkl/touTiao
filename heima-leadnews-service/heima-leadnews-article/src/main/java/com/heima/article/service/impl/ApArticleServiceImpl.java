@@ -15,6 +15,7 @@ import com.heima.model.article.pojos.ApArticleConfig;
 import com.heima.model.article.pojos.ApArticleContent;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,10 +29,18 @@ import java.util.List;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle>  implements ApArticleService {
 
-    @Autowired
-    private ApArticleMapper apArticleMapper;
+
+    private final ApArticleMapper apArticleMapper;
+
+    private final ApArticleConfigMapper apArticleConfigMapper;
+
+
+    private final ApArticleContentMapper apArticleContentMapper;
+
+    private final ArticleFreemarkerService articleFreemarkerService;
 
     private final static  short MAX_PAGE_SIZE = 50;
 
@@ -73,13 +82,7 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
         return ResponseResult.okResult(articleList);
     }
 
-    @Autowired
-    private ApArticleConfigMapper apArticleConfigMapper;
 
-    @Autowired
-    private ApArticleContentMapper apArticleContentMapper;
-    @Autowired
-    private ArticleFreemarkerService articleFreemarkerService;
 
     /**
      * 保存app端相关文章

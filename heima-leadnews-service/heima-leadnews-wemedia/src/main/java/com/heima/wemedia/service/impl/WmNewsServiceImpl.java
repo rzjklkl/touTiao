@@ -23,6 +23,7 @@ import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -39,8 +40,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> implements WmNewsService {
 
+
+    private final  WmNewsMaterialMapper wmNewsMaterialMapper;
+
+    private final  WmMaterialMapper wmMaterialMapper;
+
+    private final  WmNewsAutoScanService wmNewsAutoScanService;
     /**
      * 条件查询文章列表
      *
@@ -93,8 +101,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         return responseResult;
     }
 
-    @Autowired
-    private WmNewsAutoScanService wmNewsAutoScanService;
+
 
     /**
      * 发布修改文章或保存为草稿
@@ -200,8 +207,6 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         saveRelativeInfo(materials,newsId,WemediaConstants.WM_CONTENT_REFERENCE);
     }
 
-    @Autowired
-    private WmMaterialMapper wmMaterialMapper;
 
     /**
      * 保存文章图片与素材的关系到数据库中
@@ -252,8 +257,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         return materials;
     }
 
-    @Autowired
-    private WmNewsMaterialMapper wmNewsMaterialMapper;
+
 
     /**
      * 保存或修改文章

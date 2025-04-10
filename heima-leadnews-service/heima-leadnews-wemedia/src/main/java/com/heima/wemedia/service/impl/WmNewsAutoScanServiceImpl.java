@@ -19,6 +19,7 @@ import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmSensitiveMapper;
 import com.heima.wemedia.mapper.WmUserMapper;
 import com.heima.wemedia.service.WmNewsAutoScanService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -37,11 +38,19 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
 
-    @Autowired
-    private WmNewsMapper wmNewsMapper;
 
+    private final  WmNewsMapper wmNewsMapper;
+    private final GreenTextScan greenTextScan;
+    private final FileStorageService fileStorageService;
+    private final GreenImageScan greenImageScan;
+    private final Tess4jClient tess4jClient;
+    private final IArticleClient articleClient;
+    private final WmChannelMapper wmChannelMapper;
+    private final WmUserMapper wmUserMapper;
+    private final WmSensitiveMapper wmSensitiveMapper;
     /**
      * 自媒体文章审核
      *
@@ -87,8 +96,7 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
         }
     }
 
-    @Autowired
-    private WmSensitiveMapper wmSensitiveMapper;
+
 
     /**
      * 自管理的敏感词审核
@@ -118,14 +126,7 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
         return flag;
     }
 
-    @Autowired
-    private IArticleClient articleClient;
 
-    @Autowired
-    private WmChannelMapper wmChannelMapper;
-
-    @Autowired
-    private WmUserMapper wmUserMapper;
 
     /**
      * 保存app端相关的文章数据
@@ -164,14 +165,7 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
     }
 
 
-    @Autowired
-    private FileStorageService fileStorageService;
 
-    @Autowired
-    private GreenImageScan greenImageScan;
-
-    @Autowired
-    private Tess4jClient tess4jClient;
 
     /**
      * 审核图片
@@ -243,8 +237,6 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
         return flag;
     }
 
-    @Autowired
-    private GreenTextScan greenTextScan;
 
     /**
      * 审核纯文本内容
