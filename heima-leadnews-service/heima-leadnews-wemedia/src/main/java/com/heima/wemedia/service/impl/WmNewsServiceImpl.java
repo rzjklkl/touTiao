@@ -23,7 +23,7 @@ import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
-import lombok.RequiredArgsConstructor;
+import com.heima.wemedia.service.WmNewsTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -40,15 +40,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
-@RequiredArgsConstructor
 public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> implements WmNewsService {
 
-
-    private final  WmNewsMaterialMapper wmNewsMaterialMapper;
-
-    private final  WmMaterialMapper wmMaterialMapper;
-
-    private final  WmNewsAutoScanService wmNewsAutoScanService;
     /**
      * 条件查询文章列表
      *
@@ -101,6 +94,11 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         return responseResult;
     }
 
+    @Autowired
+    private WmNewsAutoScanService wmNewsAutoScanService;
+
+    @Autowired
+    private WmNewsTaskService wmNewsTaskService;
 
 
     /**
@@ -148,7 +146,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         saveRelativeInfoForCover(dto,wmNews,materials);
 
         //审核文章
-        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+//        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+        wmNewsTaskService.addNewsToTask(wmNews.getId(),wmNews.getPublishTime());
 
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
 
@@ -176,7 +175,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             if(materials.size() >= 3){
                 wmNews.setType(WemediaConstants.WM_NEWS_MANY_IMAGE);
                 images = materials.stream().limit(3).collect(Collectors.toList());
-            }else if(materials.size() >= 1 && materials.size() < 3){
+            }else if(materials.size() > 1 && materials.size() < 3){
                 //单图
                 wmNews.setType(WemediaConstants.WM_NEWS_SINGLE_IMAGE);
                 images = materials.stream().limit(1).collect(Collectors.toList());
@@ -207,6 +206,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         saveRelativeInfo(materials,newsId,WemediaConstants.WM_CONTENT_REFERENCE);
     }
 
+    @Autowired
+    private WmMaterialMapper wmMaterialMapper;
 
     /**
      * 保存文章图片与素材的关系到数据库中
@@ -215,7 +216,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
      * @param type
      */
     private void saveRelativeInfo(List<String> materials, Integer newsId, Short type) {
-        if(materials!=null && !materials.isEmpty()){
+        if(materials!=null && materials.size() > 0){
             //通过图片的url查询素材的id
             List<WmMaterial> dbMaterials = wmMaterialMapper.selectList(Wrappers.<WmMaterial>lambdaQuery().in(WmMaterial::getUrl, materials));
 
@@ -257,7 +258,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         return materials;
     }
 
-
+    @Autowired
+    private WmNewsMaterialMapper wmNewsMaterialMapper;
 
     /**
      * 保存或修改文章

@@ -1,6 +1,7 @@
 package com.heima.wemedia;
 
 import com.heima.apis.article.IArticleClient;
+import com.heima.apis.schedule.IScheduleClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableDiscoveryClient
 @MapperScan("com.heima.wemedia.mapper")
-@EnableFeignClients(clients = {IArticleClient.class})
+@EnableFeignClients(clients = {IArticleClient.class, IScheduleClient.class})
 @EnableAsync
 public class WemediaApplication {
 
