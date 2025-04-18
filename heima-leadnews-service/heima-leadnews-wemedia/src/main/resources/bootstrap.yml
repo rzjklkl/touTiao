@@ -10,6 +10,12 @@ spring:
         file-extension: yaml # 文件后缀名
         shared-configs: # 共享配置
           - dataId: leadnews_wemedia.yaml # 共享mybatis配置
+  kafka:
+    bootstrap-servers: 192.168.92.128:9092
+    producer:
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 tess4j:
   data-path: E:\workSpace\tessdata
   language: chi_sim
